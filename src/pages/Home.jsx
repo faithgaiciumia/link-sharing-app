@@ -1,9 +1,10 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+import Navbar from "../components/Navbar";
 
-export default function Home(){
-    return(
-        <Box>
-            <Heading>Link sharing app</Heading>
-        </Box>
-    )
+export default function Home() {
+  return (
+    <Box p={2}>
+        <Navbar />
+    </Box>
+  );
 }
