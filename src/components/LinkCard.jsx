@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Box,
   Button,
@@ -8,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { BiMenu } from "react-icons/bi";
 
-export default function LinkCard() {
+export default function LinkCard({platform, link}) {
   return (
     <Box>
       <Flex justifyContent={"space-between"}>
@@ -24,18 +25,18 @@ export default function LinkCard() {
           <FormLabel fontSize={"sm"} color={"gray"}>
             Platform
           </FormLabel>
-          <Input value={"Github"} fontSize={"sm"} />
+          <Input value={platform} fontSize={"sm"} />
         </FormControl>
         <FormControl>
           <FormLabel fontSize={"sm"} color={"gray"}>
             Link
           </FormLabel>
-          <Input value={"https://github.com/faithgaiciumia/"} fontSize={"sm"} />
+          <Input value={link} fontSize={"sm"} />
         </FormControl>
       </Box>
-      <Flex justify={"end"} my={4}>
+      {/* <Flex justify={"end"} my={4}>
         <Button colorScheme="purple">Save</Button>
-      </Flex>
+      </Flex> */}
     </Box>
   );
 }

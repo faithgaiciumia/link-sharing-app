@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <Box p={2}>
         <Navbar />
-        <Flex gap={2} align={"center"}>
+        <Flex gap={2}>
             <Sidebar/>
             <MainContent/>
         </Flex>

@@ -1,15 +1,42 @@
-import { Box, Button, FormControl, FormLabel, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa6";
 import LinkCard from "./LinkCard";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 export default function MainContent() {
-  const {isOpen, onOpen, onClose}=useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { register, handleSubmit, reset } = useForm();
+  const [links, setLinks]= useState([]);
+  const onSubmit = (data) => {
+    console.log(data);
+    setLinks((prev)=>[...prev, data])
+    reset();
+    onClose();
+  };
+  
   return (
     <Box
       boxShadow={"lg"}
       borderRadius={"lg"}
       background={"white"}
-      height={"80vh"}
+      minH={"80vh"}
       my={4}
       width={"70%"}
       p={4}
@@ -34,30 +61,50 @@ export default function MainContent() {
           Add new link
         </Button>
         <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay/>
+          <ModalOverlay />
           <ModalContent>
             <ModalHeader fontSize={"md"}>Add new link</ModalHeader>
-            <ModalCloseButton/>
+            <ModalCloseButton />
             <ModalBody>
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <FormControl my={2}>
-                  <FormLabel fontSize={"sm"} color={"gray"}>Platform</FormLabel>
-                  <Input type="text" fontSize={"sm"} />                  
+                  <FormLabel fontSize={"sm"} color={"gray"}>
+                    Platform
+                  </FormLabel>
+                  <Input
+                    type="text"
+                    fontSize={"sm"}
+                    {...register("platform", { required: true })}
+                  />
                 </FormControl>
                 <FormControl>
-                  <FormLabel fontSize={"sm"} color={"gray"}>Link</FormLabel>
-                  <Input type="text" fontSize={"sm"} />                  
+                  <FormLabel fontSize={"sm"} color={"gray"}>
+                    Link
+                  </FormLabel>
+                  <Input
+                    type="text"
+                    fontSize={"sm"}
+                    {...register("link", { required: true })}
+                  />
                 </FormControl>
               </form>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="purple" type="submit">Add</Button>
+              <Button
+                colorScheme="purple"
+                type="submit"
+                onClick={handleSubmit(onSubmit)}
+              >
+                Add
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
       </Box>
       <Box>
-        <LinkCard />
+        {links.map((link, index)=>(
+          <LinkCard key={index} platform={link.platform} link={link.link}/>
+        ))}
       </Box>
     </Box>
   );
