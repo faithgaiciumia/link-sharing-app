@@ -23,14 +23,15 @@ import { useState } from "react";
 export default function MainContent() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, reset } = useForm();
-  const [links, setLinks]= useState([]);
-  const onSubmit = (data) => {
-    console.log(data);
-    setLinks((prev)=>[...prev, data])
+  const [links, setLinks] = useState([]);
+  const onSubmit = (data) => {    
+    setLinks((prev) => [...prev, data]);
     reset();
     onClose();
   };
-  
+  const handleRemove = (indexToRemove) => {
+    setLinks((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
   return (
     <Box
       boxShadow={"lg"}
@@ -102,8 +103,14 @@ export default function MainContent() {
         </Modal>
       </Box>
       <Box>
-        {links.map((link, index)=>(
-          <LinkCard key={index} platform={link.platform} link={link.link}/>
+        {links.map((link, index) => (
+          <LinkCard
+            key={index}
+            platform={link.platform}
+            link={link.link}
+            index={index + 1}
+            onRemove={() => handleRemove(index)}
+          />
         ))}
       </Box>
     </Box>
