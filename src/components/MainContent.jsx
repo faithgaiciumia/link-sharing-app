@@ -12,6 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -24,7 +25,7 @@ export default function MainContent() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, reset } = useForm();
   const [links, setLinks] = useState([]);
-  const onSubmit = (data) => {    
+  const onSubmit = (data) => {
     setLinks((prev) => [...prev, data]);
     reset();
     onClose();
@@ -72,11 +73,19 @@ export default function MainContent() {
                   <FormLabel fontSize={"sm"} color={"gray"}>
                     Platform
                   </FormLabel>
-                  <Input
+                  <Select
                     type="text"
                     fontSize={"sm"}
                     {...register("platform", { required: true })}
-                  />
+                  >
+                    <option value={"Github"}>Github</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="Twitter">Twitter (X)</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Portfolio">Portfolio</option>
+                    <option value="Other">Other</option>
+                  </Select>
                 </FormControl>
                 <FormControl>
                   <FormLabel fontSize={"sm"} color={"gray"}>
