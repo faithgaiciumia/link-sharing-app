@@ -5,7 +5,6 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  Image,
   Input,
   Text,
 } from "@chakra-ui/react";
