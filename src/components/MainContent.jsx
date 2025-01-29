@@ -19,19 +19,21 @@ import {
 import { FaPlus } from "react-icons/fa6";
 import LinkCard from "./LinkCard";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import useLinkStore from "../store/useLinkStore";
+
 
 export default function MainContent() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, reset } = useForm();
-  const [links, setLinks] = useState([]);
+  const {links,addLink, removeLink}=useLinkStore();
+  
   const onSubmit = (data) => {
-    setLinks((prev) => [...prev, data]);
+    addLink(data);
     reset();
     onClose();
   };
   const handleRemove = (indexToRemove) => {
-    setLinks((prev) => prev.filter((_, index) => index !== indexToRemove));
+    removeLink(indexToRemove);
   };
   return (
     <Box
