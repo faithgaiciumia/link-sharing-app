@@ -12,6 +12,7 @@ import {
 import useLinkStore from "../store/useLinkStore";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
+import { FaImage } from "react-icons/fa";
 
 export default function ProfilePageMain() {
   const { profile, updateProfile } = useLinkStore();
@@ -49,14 +50,38 @@ export default function ProfilePageMain() {
         borderRadius={"md"}
         p={2}
       >
-        <Text fontSize={"sm"}>Profile picture</Text>
-        <Image
-          src={profile.avatar || "https://placehold.co/200"}
-          w={"200px"}
-          h={"200px"}
-          alt="profile"
-        />
-        <Text fontSize={"sm"}>
+        <Text fontSize={"sm"} fontWeight={600}>
+          Profile picture
+        </Text>
+        <Box
+          w="200px"
+          h="200px"
+          borderRadius="full"
+          backgroundImage={`url(${
+            profile.avatar || "https://placehold.co/200"
+          })`}
+          backgroundSize="cover"
+          backgroundPosition="center"
+          overflow="hidden"
+        >
+          <Flex
+            justify={"center"}
+            align={"center"}
+            direction={"column"}
+            h={"100%"}
+            bg="rgba(0, 0, 0, 0.3)"
+          >
+            <Button
+              variant={"ghost"}
+              color="white"
+              leftIcon={<FaImage />}
+              size={"md"}
+            >
+              Change Image
+            </Button>
+          </Flex>
+        </Box>
+        <Text fontSize={"sm"} w={"40%"}>
           Image must be below 1024px*1024px. Use PNG, JPG, or RMP format.
         </Text>
       </Flex>
