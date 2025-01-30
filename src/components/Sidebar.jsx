@@ -4,16 +4,7 @@ import useLinkStore from "../store/useLinkStore";
 export default function Sidebar() {
   const { profile, links } = useLinkStore();
   return (
-    <Box
-      boxShadow={"lg"}
-      borderRadius={"lg"}
-      background={"white"}
-      minH={"80vh"}
-      my={4}
-      width={"30%"}
-      p={8}
-      h={"auto"}
-    >
+    <Box>
       <Flex
         direction={"column"}
         justify={"center"}
