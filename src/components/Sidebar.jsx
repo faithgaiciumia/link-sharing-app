@@ -2,7 +2,7 @@ import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import useLinkStore from "../store/useLinkStore";
 
 export default function Sidebar() {
-  const { profile } = useLinkStore();
+  const { profile, links } = useLinkStore();
   return (
     <Box
       boxShadow={"lg"}
@@ -34,21 +34,57 @@ export default function Sidebar() {
           w={"150px"}
           h={"150px"}
         />
-        <Heading my={2} textAlign={"center"} fontSize={"md"}>
-          {profile.firstName} {profile.lastName}
-        </Heading>
-        <Text textAlign={"center"} fontSize={"sm"} mb={4}>
-          {profile.bio}
-        </Text>
-        <Button w={"100%"} my={2} borderRadius={"lg"}>
-          Github
-        </Button>
-        <Button w={"100%"} my={2} borderRadius={"lg"}>
-          Linked In
-        </Button>
-        <Button w={"100%"} my={2} borderRadius={"lg"}>
-          Medium
-        </Button>
+        {profile.firstName && profile.lastName ? (
+          <Heading my={2} textAlign="center" fontSize="md">
+            {profile.firstName} {profile.lastName}
+          </Heading>
+        ) : (
+          <Box
+            my={2}
+            w={"50%"}
+            h={"25px"}
+            borderRadius={"lg"}
+            background={"white"}
+            borderWidth={"1px"}
+            borderColor={"white"}
+          ></Box>
+        )}
+        {profile.bio ? (
+          <Text textAlign={"center"} fontSize={"sm"} mb={4}>
+            {profile.bio}
+          </Text>
+        ) : (
+          <Box
+            my={2}
+            w={"80%"}
+            h={"20px"}
+            borderRadius={"lg"}
+            background={"white"}
+            borderWidth={"1px"}
+            borderColor={"white"}
+            target="_blank"
+            rel="noopener noreferrer"
+          ></Box>
+        )}
+        {links.length === 0 && (
+          <Box w={"100%"} my={8}>
+            <Button w={"100%"} my={2} borderRadius={"lg"}></Button>
+            <Button w={"100%"} my={2} borderRadius={"lg"}></Button>
+            <Button w={"100%"} my={2} borderRadius={"lg"}></Button>
+          </Box>
+        )}
+        {links.map((link) => (
+          <Button
+            w={"100%"}
+            my={2}
+            borderRadius={"lg"}
+            key={link.platform}
+            as={"a"}
+            href={link.link}
+          >
+            {link.platform}
+          </Button>
+        ))}
       </Flex>
     </Box>
   );
