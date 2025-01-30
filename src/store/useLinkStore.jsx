@@ -5,10 +5,11 @@ const useLinkStore = create((set) => ({
   profile: {
     firstName: "",
     lastName: "",
-    email: "",
     bio: "",
     avatar: "",
   },
+  username: "",
+  setUsername: (newUsername) => set(() => ({ username: newUsername })),
   generatedLink: "",
   isLoading: false,
   error: null,
@@ -19,13 +20,12 @@ const useLinkStore = create((set) => ({
   addLink: (newLink) => set((state) => ({ links: [...state.links, newLink] })),
   removeLink: (indexToRemove) =>
     set((state) => ({
-      links: state.links.filter((_, i) => i != indexToRemove),
+      links: state.links.filter((_, i) => i !== indexToRemove),
     })),
   generateLink: () =>
-    set(() => {
-      const uniqueID = Math.random().toString(36).substring(2, 8);
-      return { generatedLink: `https://link-sharing.com/${uniqueID}` };
-    }),
+    set((state) => ({
+      generatedLink: `https://link-sharing.com/${state.username}`,
+    })),
 
   setLoading: (status) => set(() => ({ isLoading: status })),
 }));

@@ -113,15 +113,7 @@ export default function ProfilePageMain() {
               {...register("bio", { required: true })}
             />
           </FormControl>
-          <FormControl display={"flex"} my={2}>
-            <FormLabel w={"40%"}>Email</FormLabel>
-            <Input
-              placeholder="Ben"
-              w={"60%"}
-              borderColor={"gray.700"}
-              {...register("email", { required: true })}
-            />
-          </FormControl>
+          
         </form>
       </Box>
       <Flex justifyContent={"end"}>
