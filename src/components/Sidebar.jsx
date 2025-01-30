@@ -1,6 +1,8 @@
 import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import useLinkStore from "../store/useLinkStore";
 
 export default function Sidebar() {
+  const { profile } = useLinkStore();
   return (
     <Box
       boxShadow={"lg"}
@@ -28,14 +30,16 @@ export default function Sidebar() {
       >
         <Image
           borderRadius={"full"}
-          src="https://placehold.co/150"
+          src={profile.avatar || "https://placehold.co/150"}
           w={"150px"}
           h={"150px"}
         />
         <Heading my={2} textAlign={"center"} fontSize={"md"}>
-          Faith Gaiciumia
+          {profile.firstName} {profile.lastName}
         </Heading>
-        <Text textAlign={"center"} fontSize={"sm"} mb={4}>Hardworking mother and developer</Text>
+        <Text textAlign={"center"} fontSize={"sm"} mb={4}>
+          {profile.bio}
+        </Text>
         <Button w={"100%"} my={2} borderRadius={"lg"}>
           Github
         </Button>
