@@ -3,13 +3,16 @@ import { ChakraProvider } from "@chakra-ui/react";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Preview from "./pages/Preview";
+import Landing from "./pages/Landing";
+import theme from "./theme";
 
 function App() {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/preview" element={<Preview />} />
         </Routes>
