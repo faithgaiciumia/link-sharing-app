@@ -16,6 +16,7 @@ export default function Signin() {
       const formBody = new URLSearchParams();
       formBody.append("email", email);
       formBody.append("csrfToken", csrfToken);
+      formBody.append("callbackUrl", "http://localhost:5173");
       console.log("formbody is:", formBody.toString());
       //make THE request
       const res = await fetch("http://localhost:4000/auth/signin/resend", {
