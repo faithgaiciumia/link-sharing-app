@@ -1,9 +1,28 @@
-import { Box, Flex } from "@chakra-ui/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Box, Flex, useToast } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import MainContent from "../components/MainContent";
+import { useEffect } from "react";
+import { fetchSession } from "../data/fetchSession";
 
 export default function Home() {
+  //get user email and session details
+  const toast = useToast();
+  useEffect(() => {
+    const loadUser = async () => {
+      const session = await fetchSession();
+      if (session?.user?.email) {
+        toast({
+          description: `Logged in as ${session.user.email}`,
+          status: "info",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+    loadUser();
+  }, []);
   return (
     <Box p={2}>
       <Navbar />
