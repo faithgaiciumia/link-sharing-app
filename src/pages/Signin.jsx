@@ -1,24 +1,43 @@
-import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  useColorModeValue,
+  useToast,
+} from "@chakra-ui/react";
+import { LuBookDashed } from "react-icons/lu";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 
 export default function Signin() {
-  const [email, setEmail] = useState("");
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({ mode: "onChange" });
+
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
+
+  const bgColor = useColorModeValue("white", "gray.800");
+  const inputBorderColor = useColorModeValue("gray.300", "gray.600");
+
+  const onSubmit = async (data) => {
+    setLoading(true);
     try {
-      //get the csrf token
       const csrfResponse = await fetch("http://localhost:4000/auth/csrf", {
         credentials: "include",
       });
       const csrfData = await csrfResponse.json();
       const csrfToken = csrfData.csrfToken;
-      //save email and csrf as key-value pairs
+
       const formBody = new URLSearchParams();
-      formBody.append("email", email);
+      formBody.append("email", data.email);
       formBody.append("csrfToken", csrfToken);
       formBody.append("callbackUrl", "http://localhost:5173");
-      console.log("formbody is:", formBody.toString());
-      //make THE request
+
       const res = await fetch("http://localhost:4000/auth/signin/resend", {
         method: "POST",
         headers: {
@@ -27,45 +46,91 @@ export default function Signin() {
         credentials: "include",
         body: formBody.toString(),
       });
+
       if (res.ok) {
-        console.log("magic link sent");
+        toast({
+          title: "Magic link sent!",
+          description: "Check your inbox to sign in.",
+          status: "success",
+          duration: 4000,
+          isClosable: true,
+        });
       } else {
-        const error = await res.text();
-        console.error("Error sending link:", error);
+        const errorText = await res.text();
+        throw new Error(errorText);
       }
     } catch (error) {
-      console.error("Something went wrong. ", error);
+      toast({
+        title: "Error sending link",
+        description: error.message || "Something went wrong.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
-    <Box p={4}>
-      <Box bgColor={"white"} w={"35%"} mx={"auto"} p={4}>
-        <Box my={4}>
-          <Heading textAlign={"center"} fontSize={"xl"}>
-            Login to Wanlinq.
-          </Heading>
-        </Box>
-        <Box my={4}>
-          <Heading textAlign={"center"} fontSize={"xl"}>
-            Save 4 hours per person every week.
-          </Heading>
-        </Box>
-        <form onSubmit={handleSubmit}>
+    <Flex minH="100vh" align="center" justify="center" p={4}>
+      <Box
+        bg={bgColor}
+        w={{ base: "100%", sm: "90%", md: "70%", lg: "35%" }}
+        p={8}
+        borderRadius="lg"
+        boxShadow="lg"
+      >
+        <Flex justify="center" align="center" mb={4}>
+          <LuBookDashed size={32} color="purple" />
+        </Flex>
+
+        <Heading textAlign="center" size="lg" mb={2}>
+          Login to Wanlinq
+        </Heading>
+        <Heading textAlign="center" size="sm" mb={6} color="gray.500">
+          Connect with 50% more people.
+        </Heading>
+
+        <Box mt={10}>
+          <form onSubmit={handleSubmit(onSubmit)}>
           <Input
-            placeholder="Enter email"
-            name="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             type="email"
-            border={"1px"}
-            fontSize={"sm"}
+            placeholder="Enter your email"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                message: "Invalid email format",
+              },
+            })}
+            borderColor={inputBorderColor}
+            mb={2}
+            fontSize="sm"
           />
-          <Flex my={4} alignItems={"center"} justifyContent={"center"}>
-            <Button type="submit" size={"lg"} w={"100%"} fontSize={"sm"} colorScheme="purple">Sign up with Email</Button>
-          </Flex>
+          {errors.email && (
+            <Box color="red.500" fontSize="xs" mt={-1} mb={2}>
+              {errors.email.message}
+            </Box>
+          )}
+
+          <Button
+            type="submit"
+            size="lg"
+            w="100%"
+            fontSize="sm"
+            colorScheme={isValid ? "purple" : undefined}
+            bg={isValid ? undefined : "blackAlpha.800"}
+            color={isValid ? undefined : "white"}
+            isLoading={loading}
+            loadingText="Sending"
+            _hover={isValid ? {} : { bg: "blackAlpha.700" }}
+          >
+            Sign in with Email
+          </Button>
         </form>
+        </Box>
       </Box>
-    </Box>
+    </Flex>
   );
 }
