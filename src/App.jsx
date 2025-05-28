@@ -6,13 +6,21 @@ import Preview from "./pages/Preview";
 import Landing from "./pages/Landing";
 import theme from "./theme";
 import Signin from "./pages/Signin";
+import AuthGate from "./pages/AuthGate";
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
       <Router>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route
+            path="/"
+            element={
+              <AuthGate>
+                <Landing />
+              </AuthGate>
+            }
+          />
           <Route path="/signin" element={<Signin />} />
           <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
