@@ -9,18 +9,27 @@ import {
 } from "@chakra-ui/react";
 import { LuBookDashed } from "react-icons/lu";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Signin() {
+  //react hook form for validation and tracking
   const {
     register,
     handleSubmit,
+    setFocus,
     formState: { errors, isValid },
   } = useForm({ mode: "onChange" });
 
+  //autofocus input
+  useEffect(() => {
+    setFocus("email");
+  }, [setFocus]);
+
+  //intuitive form
   const toast = useToast();
   const [loading, setLoading] = useState(false);
 
+  //dark and light mode enable
   const bgColor = useColorModeValue("white", "gray.800");
   const inputBorderColor = useColorModeValue("gray.300", "gray.600");
 
@@ -50,7 +59,7 @@ export default function Signin() {
       if (res.ok) {
         toast({
           title: "Magic link sent!",
-          description: "Check your inbox to sign in.",
+          description: "Check your email inbox to sign in.",
           status: "success",
           duration: 4000,
           isClosable: true,
@@ -94,41 +103,41 @@ export default function Signin() {
 
         <Box mt={10}>
           <form onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                message: "Invalid email format",
-              },
-            })}
-            borderColor={inputBorderColor}
-            mb={2}
-            fontSize="sm"
-          />
-          {errors.email && (
-            <Box color="red.500" fontSize="xs" mt={-1} mb={2}>
-              {errors.email.message}
-            </Box>
-          )}
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  message: "Invalid email format",
+                },
+              })}
+              borderColor={inputBorderColor}
+              mb={2}
+              fontSize="sm"
+            />
+            {errors.email && (
+              <Box color="red.500" fontSize="xs" mt={-1} mb={2}>
+                {errors.email.message}
+              </Box>
+            )}
 
-          <Button
-            type="submit"
-            size="lg"
-            w="100%"
-            fontSize="sm"
-            colorScheme={isValid ? "purple" : undefined}
-            bg={isValid ? undefined : "blackAlpha.800"}
-            color={isValid ? undefined : "white"}
-            isLoading={loading}
-            loadingText="Sending"
-            _hover={isValid ? {} : { bg: "blackAlpha.700" }}
-          >
-            Sign in with Email
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              size="lg"
+              w="100%"
+              fontSize="sm"
+              colorScheme={isValid ? "purple" : undefined}
+              bg={isValid ? undefined : "blackAlpha.800"}
+              color={isValid ? undefined : "white"}
+              isLoading={loading}
+              loadingText="Sending"
+              _hover={isValid ? {} : { bg: "blackAlpha.700" }}
+            >
+              Sign in with Email
+            </Button>
+          </form>
         </Box>
       </Box>
     </Flex>
