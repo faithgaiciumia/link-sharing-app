@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 
+// eslint-disable-next-line react/prop-types
 export default function EmailSent({email}){
     return(
         <Box>

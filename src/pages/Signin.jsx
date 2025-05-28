@@ -95,7 +95,7 @@ export default function Signin() {
         </Flex>
 
         <Heading textAlign="center" size="lg" mb={2}>
-          {step === "input" && "Login to Wanlinq"}
+          {step === "input" && "Login to Wanlinq"}  
           {step === "sent" && "Check your email"}
         </Heading>
         {step === "input" && (
