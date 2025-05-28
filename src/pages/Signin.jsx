@@ -1,4 +1,4 @@
-import { Box, Button, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
 import { useState } from "react";
 
 export default function Signin() {
@@ -38,18 +38,34 @@ export default function Signin() {
     }
   };
   return (
-    <Box>
-      <form onSubmit={handleSubmit}>
-        <Input
-          placeholder="Enter email"
-          name="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-        />
-        <Button type="submit">Sign in</Button>
-      </form>
+    <Box p={4}>
+      <Box bgColor={"white"} w={"35%"} mx={"auto"} p={4}>
+        <Box my={4}>
+          <Heading textAlign={"center"} fontSize={"xl"}>
+            Login to Wanlinq.
+          </Heading>
+        </Box>
+        <Box my={4}>
+          <Heading textAlign={"center"} fontSize={"xl"}>
+            Save 4 hours per person every week.
+          </Heading>
+        </Box>
+        <form onSubmit={handleSubmit}>
+          <Input
+            placeholder="Enter email"
+            name="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            border={"1px"}
+            fontSize={"sm"}
+          />
+          <Flex my={4} alignItems={"center"} justifyContent={"center"}>
+            <Button type="submit" size={"lg"} w={"100%"} fontSize={"sm"} colorScheme="purple">Sign up with Email</Button>
+          </Flex>
+        </form>
+      </Box>
     </Box>
   );
 }
