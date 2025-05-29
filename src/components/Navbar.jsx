@@ -2,6 +2,7 @@ import { LinkIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { LuUserRound } from "react-icons/lu";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import LogoutButton from "./LogoutButton";
 
 export default function Navbar() {
   const location = useLocation();
@@ -52,11 +53,12 @@ export default function Navbar() {
             Profile Details
           </Button>
         </Flex>
-        <Box>
+        <Flex>
           <Button as={RouterLink} to={"/preview"} variant={"outline"} colorScheme="purple" size={"sm"}>
             Preview
           </Button>
-        </Box>
+          <LogoutButton/>
+        </Flex>
       </Flex>
     </Box>
   );
