@@ -7,6 +7,7 @@ import Landing from "./pages/Landing";
 import theme from "./theme";
 import Signin from "./pages/Signin";
 import AuthGate from "./pages/AuthGate";
+import SetupUsername from "./pages/SetupUsername";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           />
           <Route path="/signin" element={<Signin />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/setup-username" element={<SetupUsername />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/preview" element={<Preview />} />
         </Routes>
