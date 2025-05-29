@@ -8,15 +8,12 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
     <Box px={{ base: 4, md: 8 }} py={{ base: 10, md: 20 }}>
-      <Flex
-        direction={"column"}
-        justify={"start"}
-        align={"center"}
-      >
+      <Flex direction={"column"} justify={"start"} align={"center"}>
         <Flex
           direction={{ base: "column", md: "row" }}
           align="center"
@@ -38,10 +35,14 @@ export default function Hero() {
                 fontSize={{ base: "md", md: "lg" }}
                 color={useColorModeValue("gray.600", "gray.300")}
               >
-                Create your special dev digital contact card. Share a single link with your
-                clients, followers, and friends connecting to your social profiles and dev content. 
+                Create your special dev digital contact card. Share a single
+                link with your clients, followers, and friends connecting to
+                your social profiles and dev content.
               </Text>
+
               <Button
+                as={Link}
+                to="/signin"
                 colorScheme="purple"
                 size="lg"
                 borderRadius="lg"
