@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { LuBookDashed } from "react-icons/lu";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SetupUsername() {
@@ -22,11 +22,55 @@ export default function SetupUsername() {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
+    watch,
     formState: { errors, isValid },
   } = useForm({ mode: "onChange" });
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  //track username as user types
+  const username = watch("username");
+
+  useEffect(() => {
+    //if username is too short do not bother checking
+    if (!username || username.length < 3) {
+      return;
+    }
+    //function to check for username availability
+
+    const delayFunction = setTimeout(async () => {
+      try {
+        const res = await fetch("http://localhost:4000/graphql", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: `
+              query IsUsernameAvailable($username: String!) {
+                isUsernameAvailable(username: $username)
+              }
+            `,
+            variables: { username },
+          }),
+        });
+        const result = await res.json();
+        const available = result?.data?.isUsernameAvailable;
+        if (!available) {
+          setError("username", {
+            type: "manual",
+            message: "Username is already taken",
+          });
+        } else {
+          clearErrors("username");
+        }
+      } catch (error) {
+        console.error("Error checking username availability:", error);
+      }
+    }, 500);
+    return () => clearTimeout(delayFunction);
+  }, [username, setError, clearErrors]);
 
   const onSubmit = async ({ username }) => {
     setLoading(true);
