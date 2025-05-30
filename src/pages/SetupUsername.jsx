@@ -7,6 +7,7 @@ import {
   InputGroup,
   InputLeftAddon,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { LuBookDashed } from "react-icons/lu";
 import { useForm } from "react-hook-form";
@@ -30,6 +31,8 @@ export default function SetupUsername() {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const toast = useToast();
 
   //track username as user types
   const username = watch("username");
@@ -93,9 +96,20 @@ export default function SetupUsername() {
 
       const data = await res.json();
       if (data?.data?.updateUserUsername?.username) {
+        toast({
+          description: "Username successfully set!",
+          type: "success",
+          duration: 1500,
+          isClosable: true,
+        });
         navigate("/home");
       } else {
-        alert("Failed to set username. Try another one.");
+        toast({
+          description: "Failed to set username. Please try again",
+          type: "error",
+          duration: 1500,
+          isClosable: true,
+        });
       }
     } catch (err) {
       console.error(err);
