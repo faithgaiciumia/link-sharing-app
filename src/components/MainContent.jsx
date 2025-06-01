@@ -15,22 +15,53 @@ import {
   Select,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa6";
 import LinkCard from "./LinkCard";
 import { useForm } from "react-hook-form";
 import useLinkStore from "../store/useLinkStore";
-
+import { useState } from "react";
 
 export default function MainContent() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, reset } = useForm();
-  const {links,addLink, removeLink}=useLinkStore();
-  
-  const onSubmit = (data) => {
-    addLink(data);
-    reset();
-    onClose();
+  const { links, addLink, removeLink } = useLinkStore();
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+
+  const onSubmit = async (data) => {
+    const userId = data.userId;
+    const siteName = data.siteName;
+    const siteLink = data.siteLink;
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:4000/graphql", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+          mutation AddUserLink($userId:ID!, $siteName:String!, siteLink:String!){
+          addUserLink(userID:$userId, siteName:$siteName, siteLink:$siteLink){
+          id}}`,
+          variables: { userId, siteName, siteLink },
+        }),
+      });
+      const data = await res.json();
+      if (data?.data?.addUserLink?.id) {
+        toast({
+          description: "Link successfully added!",
+          type: "success",
+          duration: 1500,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Something went wrong adding new link", error);
+    } finally {
+      onClose();
+    }
   };
   const handleRemove = (indexToRemove) => {
     removeLink(indexToRemove);
@@ -78,7 +109,7 @@ export default function MainContent() {
                   <Select
                     type="text"
                     fontSize={"sm"}
-                    {...register("platform", { required: true })}
+                    {...register("siteName", { required: true })}
                   >
                     <option value={"Github"}>Github</option>
                     <option value="LinkedIn">LinkedIn</option>
@@ -96,7 +127,7 @@ export default function MainContent() {
                   <Input
                     type="text"
                     fontSize={"sm"}
-                    {...register("link", { required: true })}
+                    {...register("siteLink", { required: true })}
                   />
                 </FormControl>
               </form>
