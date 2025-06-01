@@ -2,7 +2,7 @@ export const fetchCurrentUser = async () => {
   try {
     const res = await fetch("http://localhost:4000/graphql", {
       method: "POST",
-      credentials: "include", 
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -10,6 +10,7 @@ export const fetchCurrentUser = async () => {
         query: `
           query {
             getCurrentUser {
+              _id
               email
               name
               username

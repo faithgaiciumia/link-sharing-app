@@ -22,6 +22,7 @@ import LinkCard from "./LinkCard";
 import { useForm } from "react-hook-form";
 import useLinkStore from "../store/useLinkStore";
 import { useState } from "react";
+import { fetchCurrentUser } from "../data/fetchCurrentUser";
 
 export default function MainContent() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -31,38 +32,80 @@ export default function MainContent() {
   const toast = useToast();
 
   const onSubmit = async (data) => {
-    const userId = data.userId;
-    const siteName = data.siteName;
-    const siteLink = data.siteLink;
     setLoading(true);
+
     try {
+      const user = await fetchCurrentUser();
+
+      if (!user?._id) {
+        toast({
+          title: "Authentication Error",
+          description: "User not authenticated. Please log in.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      const { siteName, siteLink } = data;
+
       const res = await fetch("http://localhost:4000/graphql", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: `
-          mutation AddUserLink($userId:ID!, $siteName:String!, siteLink:String!){
-          addUserLink(userID:$userId, siteName:$siteName, siteLink:$siteLink){
-          id}}`,
-          variables: { userId, siteName, siteLink },
+    mutation AddUserLink($userId: ID!, $siteName: String!, $siteLink: String!) {
+      addUserLink(userId: $userId, siteName: $siteName, siteLink: $siteLink) {
+        _id
+      }
+    }
+  `,
+          variables: {
+            userId: user._id, // must match $userId
+            siteName,
+            siteLink,
+          },
         }),
       });
-      const data = await res.json();
-      if (data?.data?.addUserLink?.id) {
+
+      const resData = await res.json();
+
+      if (resData?.data?.addUserLink?._id) {
         toast({
           description: "Link successfully added!",
-          type: "success",
+          status: "success",
           duration: 1500,
+          isClosable: true,
+        });
+        reset(); // reset form fields
+        onClose(); // close modal if open
+      } else {
+        toast({
+          title: "Failed to add link",
+          description:
+            resData?.errors?.[0]?.message ||
+            "An unknown error occurred. Please try again.",
+          status: "error",
+          duration: 3000,
           isClosable: true,
         });
       }
     } catch (error) {
       console.error("Something went wrong adding new link", error);
+      toast({
+        title: "Network Error",
+        description: "Something went wrong while connecting to the server.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     } finally {
-      onClose();
+      setLoading(false);
     }
   };
+
   const handleRemove = (indexToRemove) => {
     removeLink(indexToRemove);
   };
@@ -137,6 +180,8 @@ export default function MainContent() {
                 colorScheme="purple"
                 type="submit"
                 onClick={handleSubmit(onSubmit)}
+                isLoading={loading}
+                loadingText="Adding..."
               >
                 Add
               </Button>
