@@ -11,7 +11,7 @@ export default function Navbar() {
     <Box p={4} boxShadow={"lg"} bg={"white"} borderRadius={"lg"}>
       <Flex justify={"space-between"} align={"center"}>
         <Box>
-          <Heading fontSize={"md"}>devlinks</Heading>
+          <Heading fontSize={"md"}>Wanlinq</Heading>
         </Box>
         <Flex gap={6} align={"center"}>
           <Button
