@@ -141,8 +141,40 @@ export default function MainContent() {
     }
   };
 
-  const handleRemove = (_id) => {
-    console.log(_id);
+  const handleRemove = async (linkId) => {
+    try {
+      const user = await fetchCurrentUser();
+
+      const res = await fetch("http://localhost:4000/graphql", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+          mutation DeleteUserLink($userId: ID!, $linkId: ID!) {
+            deleteUserLink(userId: $userId, linkId: $linkId) {
+              _id
+            }
+          }
+        `,
+          variables: {
+            userId: user._id,
+            linkId,
+          },
+        }),
+      });
+
+      const json = await res.json();
+
+      if (json?.data?.deleteUserLink?._id) {
+        return "deleted successfully";
+      } else {
+        return "error deleting";
+      }
+    } catch (error) {
+      console.error("Error deleting link:", error);
+      return "error deleting";
+    }
   };
 
   return (
@@ -239,6 +271,7 @@ export default function MainContent() {
               link={link.siteLink}
               index={index + 1}
               onRemove={() => handleRemove(link._id)}
+              setUpdated={setUpdated}
             />
           ))
         )}

@@ -10,14 +10,14 @@ import {
 import { BiMenu } from "react-icons/bi";
 import RemoveLinkButton from "./RemoveLinkButton";
 
-export default function LinkCard({ index, platform, link, onRemove }) {
+export default function LinkCard({ index, platform, link, onRemove, setUpdated }) {
   return (
     <Box my={4} background={"gray.100"} p={4} borderRadius={"md"}>
       <Flex justifyContent={"space-between"}>
         <Button variant={"ghost"} leftIcon={<BiMenu />} size={"sm"}>
           Link #{index}
         </Button>
-        <RemoveLinkButton onRemove={onRemove} />
+        <RemoveLinkButton onRemove={onRemove} setUpdated={setUpdated} />
       </Flex>
       <Box>
         <FormControl my={2}>
