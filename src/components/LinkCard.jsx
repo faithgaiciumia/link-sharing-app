@@ -8,7 +8,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { BiMenu } from "react-icons/bi";
-import { FaTrash } from "react-icons/fa6";
+import RemoveLinkButton from "./RemoveLinkButton";
 
 export default function LinkCard({ index, platform, link, onRemove }) {
   return (
@@ -17,15 +17,7 @@ export default function LinkCard({ index, platform, link, onRemove }) {
         <Button variant={"ghost"} leftIcon={<BiMenu />} size={"sm"}>
           Link #{index}
         </Button>
-        <Button
-          variant={"ghost"}
-          size={"sm"}
-          leftIcon={<FaTrash />}
-          colorScheme="red"
-          onClick={onRemove}
-        >
-          Remove
-        </Button>
+        <RemoveLinkButton onRemove={onRemove} />
       </Flex>
       <Box>
         <FormControl my={2}>

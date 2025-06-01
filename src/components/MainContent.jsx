@@ -21,14 +21,12 @@ import {
 import { FaPlus } from "react-icons/fa6";
 import LinkCard from "./LinkCard";
 import { useForm } from "react-hook-form";
-import useLinkStore from "../store/useLinkStore";
 import { useEffect, useState } from "react";
 import { fetchCurrentUser } from "../data/fetchCurrentUser";
 
 export default function MainContent() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, reset } = useForm();
-  const { removeLink } = useLinkStore();
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -143,8 +141,8 @@ export default function MainContent() {
     }
   };
 
-  const handleRemove = (indexToRemove) => {
-    removeLink(indexToRemove);
+  const handleRemove = (_id) => {
+    console.log(_id);
   };
 
   return (
@@ -240,7 +238,7 @@ export default function MainContent() {
               platform={link.siteName}
               link={link.siteLink}
               index={index + 1}
-              onRemove={() => handleRemove(index)}
+              onRemove={() => handleRemove(link._id)}
             />
           ))
         )}
