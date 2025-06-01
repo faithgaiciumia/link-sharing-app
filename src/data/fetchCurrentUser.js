@@ -14,6 +14,11 @@ export const fetchCurrentUser = async () => {
               email
               name
               username
+               links {
+                 _id
+                siteName
+                siteLink
+              }
             }
           }
         `,

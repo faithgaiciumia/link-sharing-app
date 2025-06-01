@@ -16,20 +16,56 @@ import {
   Text,
   useDisclosure,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa6";
 import LinkCard from "./LinkCard";
 import { useForm } from "react-hook-form";
 import useLinkStore from "../store/useLinkStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchCurrentUser } from "../data/fetchCurrentUser";
 
 export default function MainContent() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, reset } = useForm();
-  const { links, addLink, removeLink } = useLinkStore();
+  const { removeLink } = useLinkStore();
+  const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const [updated, setUpdated] = useState(false);
+  const [fetchingLinks, setFetchingLinks] = useState(false);
+
+  // Fetch user links on component mount and when 'updated' changes
+  useEffect(() => {
+    const fetchUserLinks = async () => {
+      setFetchingLinks(true);
+      try {
+        const user = await fetchCurrentUser();
+        if (user?.links) {
+          setLinks(user.links);
+        } else {
+          setLinks([]);
+          toast({
+            description: "No links found for this user.",
+            status: "info",
+            duration: 2000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching links", error);
+        toast({
+          description: "Failed to fetch links. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setFetchingLinks(false);
+      }
+    };
+    fetchUserLinks();
+  }, [updated, toast]);
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -56,14 +92,14 @@ export default function MainContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: `
-    mutation AddUserLink($userId: ID!, $siteName: String!, $siteLink: String!) {
-      addUserLink(userId: $userId, siteName: $siteName, siteLink: $siteLink) {
-        _id
-      }
-    }
-  `,
+            mutation AddUserLink($userId: ID!, $siteName: String!, $siteLink: String!) {
+              addUserLink(userId: $userId, siteName: $siteName, siteLink: $siteLink) {
+                _id
+              }
+            }
+          `,
           variables: {
-            userId: user._id, // must match $userId
+            userId: user._id,
             siteName,
             siteLink,
           },
@@ -80,7 +116,8 @@ export default function MainContent() {
           isClosable: true,
         });
         reset(); // reset form fields
-        onClose(); // close modal if open
+        onClose(); // close modal
+        setUpdated((prev) => !prev); // trigger refetch links
       } else {
         toast({
           title: "Failed to add link",
@@ -109,6 +146,7 @@ export default function MainContent() {
   const handleRemove = (indexToRemove) => {
     removeLink(indexToRemove);
   };
+
   return (
     <Box
       boxShadow={"lg"}
@@ -127,7 +165,7 @@ export default function MainContent() {
           Add/edit/remove links below and then share all of your profiles with
           the world!
         </Text>
-      </Box>{" "}
+      </Box>
       <Box my={8}>
         <Button
           leftIcon={<FaPlus />}
@@ -144,13 +182,12 @@ export default function MainContent() {
             <ModalHeader fontSize={"md"}>Add new link</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form id="add-link-form" onSubmit={handleSubmit(onSubmit)}>
                 <FormControl my={2}>
                   <FormLabel fontSize={"sm"} color={"gray"}>
                     Platform
                   </FormLabel>
                   <Select
-                    type="text"
                     fontSize={"sm"}
                     {...register("siteName", { required: true })}
                   >
@@ -179,7 +216,7 @@ export default function MainContent() {
               <Button
                 colorScheme="purple"
                 type="submit"
-                onClick={handleSubmit(onSubmit)}
+                form="add-link-form"
                 isLoading={loading}
                 loadingText="Adding..."
               >
@@ -190,15 +227,23 @@ export default function MainContent() {
         </Modal>
       </Box>
       <Box>
-        {links.map((link, index) => (
-          <LinkCard
-            key={index}
-            platform={link.platform}
-            link={link.link}
-            index={index + 1}
-            onRemove={() => handleRemove(index)}
-          />
-        ))}
+        {fetchingLinks ? (
+          <Spinner size="lg" label="Loading links..." colorScheme="purple" />
+        ) : links.length === 0 ? (
+          <Text color="gray" fontStyle="italic">
+            No links added yet.
+          </Text>
+        ) : (
+          links.map((link, index) => (
+            <LinkCard
+              key={link._id}
+              platform={link.siteName}
+              link={link.siteLink}
+              index={index + 1}
+              onRemove={() => handleRemove(index)}
+            />
+          ))
+        )}
       </Box>
     </Box>
   );
