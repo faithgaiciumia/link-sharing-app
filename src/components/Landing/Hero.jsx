@@ -8,9 +8,26 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { fetchCurrentUser } from "../../data/fetchCurrentUser";
 
 export default function Hero() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const user = await fetchCurrentUser();
+        if (user?._id) {
+          setIsLoggedIn(true);
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking user:", error);
+      }
+    };
+    checkUser();
+  });
   return (
     <Box px={{ base: 4, md: 8 }} py={{ base: 10, md: 20 }}>
       <Flex direction={"column"} justify={"start"} align={"center"}>
@@ -42,7 +59,7 @@ export default function Hero() {
 
               <Button
                 as={Link}
-                to="/signin"
+                to={isLoggedIn ? "/home" : "/signin"}
                 colorScheme="purple"
                 size="lg"
                 borderRadius="lg"
