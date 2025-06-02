@@ -7,6 +7,7 @@ import {
   Heading,
   Input,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ import { fetchCurrentUser } from "../data/fetchCurrentUser";
 
 export default function ProfilePageMain() {
   const [updated, setUpdated] = useState(false);
+  const toast = useToast();
 
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -38,7 +40,8 @@ export default function ProfilePageMain() {
             firstName: first,
             lastName: last,
             bio: user.bio || "",
-            username: user.username || "",
+            imageURL: user.imageURL || "",
+            userId: user._id,
           });
         }
       } catch (error) {
@@ -48,11 +51,64 @@ export default function ProfilePageMain() {
     getUser();
   }, [reset, updated]);
 
-  const onSubmit = (data) => {
-    //send data to backend
-    console.log(data);
-    reset();
+  const onSubmit = async (data) => {
+    const name = `${data.firstName} ${data.lastName}`.trim();
+    console.log("nimeitwa");
+    try {
+      const response = await fetch("/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+            mutation UpdateUser($userId: String!, $name: String!, $bio: String!, $imageURL: String!) {
+              updateUserProfileDetails(userId: $userId, name: $name, bio: $bio, imageURL: $imageURL) {
+                _id
+                name
+                bio
+                imageURL
+              }
+            }
+          `,
+          variables: {
+            userId: data.userId,
+            name,
+            bio: data.bio,
+            imageURL: data.imageURL,
+          },
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.errors) {
+        throw new Error(
+          result.errors[0]?.message || "Failed to update profile"
+        );
+      }
+
+      toast({
+        title: "Profile updated.",
+        description: "Your profile details were successfully updated.",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+
+      setUpdated((prev) => !prev);
+    } catch (error) {
+      toast({
+        title: "Update failed.",
+        description: "Something went wrong.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      console.error("Error updating profile details", error);
+    }
   };
+
   return (
     <Box
       boxShadow={"lg"}
@@ -71,6 +127,7 @@ export default function ProfilePageMain() {
           Add personal details to create a personal touch to your profile.
         </Text>
       </Box>
+
       <Flex
         my={2}
         justify={"space-between"}
@@ -112,16 +169,9 @@ export default function ProfilePageMain() {
           Image must be below 1024px*1024px. Use PNG, JPG, or RMP format.
         </Text>
       </Flex>
+
       <Box my={2} background={"gray.100"} borderRadius={"md"} p={2}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl isRequired display={"flex"} my={2}>
-            <FormLabel w={"40%"}>Username</FormLabel>
-            <Input
-              w={"60%"}
-              borderColor={"gray.700"}
-              {...register("username", { required: true })}
-            />
-          </FormControl>
           <FormControl isRequired display={"flex"} my={2}>
             <FormLabel w={"40%"}>First Name</FormLabel>
             <Input
@@ -130,6 +180,7 @@ export default function ProfilePageMain() {
               {...register("firstName", { required: true })}
             />
           </FormControl>
+
           <FormControl isRequired display={"flex"} my={2}>
             <FormLabel w={"40%"}>Last Name</FormLabel>
             <Input
@@ -138,6 +189,7 @@ export default function ProfilePageMain() {
               {...register("lastName", { required: true })}
             />
           </FormControl>
+
           <FormControl isRequired display={"flex"} my={2}>
             <FormLabel w={"40%"}>Bio</FormLabel>
             <Input
@@ -146,18 +198,25 @@ export default function ProfilePageMain() {
               {...register("bio", { required: true })}
             />
           </FormControl>
+
+          <Input
+            hidden
+            borderColor={"gray.700"}
+            {...register("userId", { required: true })}
+          />
+          <Input
+            hidden
+            borderColor={"gray.700"}
+            {...register("imageURL", { required: true })}
+          />
+
+          <Flex justifyContent={"end"} mt={4}>
+            <Button colorScheme="purple" size={"md"} type="submit">
+              Save
+            </Button>
+          </Flex>
         </form>
       </Box>
-      <Flex justifyContent={"end"}>
-        <Button
-          colorScheme="purple"
-          size={"md"}
-          type="submit"
-          onClick={handleSubmit(onSubmit)}
-        >
-          Save
-        </Button>
-      </Flex>
     </Box>
   );
 }
