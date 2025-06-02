@@ -14,6 +14,8 @@ export const fetchCurrentUser = async () => {
               email
               name
               username
+              bio
+              imageURL
                links {
                  _id
                 siteName

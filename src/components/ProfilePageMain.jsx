@@ -32,6 +32,7 @@ export default function ProfilePageMain() {
     const getUser = async () => {
       try {
         const user = await fetchCurrentUser();
+        console.log("user", user);
         if (user?._id) {
           const fullName = user.name?.trim() || "";
           const [first = "", last = ""] = fullName.split(" ");
@@ -53,9 +54,9 @@ export default function ProfilePageMain() {
 
   const onSubmit = async (data) => {
     const name = `${data.firstName} ${data.lastName}`.trim();
-    console.log("nimeitwa");
+
     try {
-      const response = await fetch("/graphql", {
+      const response = await fetch("http://localhost:4000/graphql", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -204,11 +205,7 @@ export default function ProfilePageMain() {
             borderColor={"gray.700"}
             {...register("userId", { required: true })}
           />
-          <Input
-            hidden
-            borderColor={"gray.700"}
-            {...register("imageURL", { required: true })}
-          />
+          <Input hidden borderColor={"gray.700"} {...register("imageURL")} />
 
           <Flex justifyContent={"end"} mt={4}>
             <Button colorScheme="purple" size={"md"} type="submit">
