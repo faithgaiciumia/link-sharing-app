@@ -8,19 +8,49 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import useLinkStore from "../store/useLinkStore";
+
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaImage } from "react-icons/fa";
+import { fetchCurrentUser } from "../data/fetchCurrentUser";
 
 export default function ProfilePageMain() {
-  const { profile, updateProfile } = useLinkStore();
-  const { register, handleSubmit, reset } = useForm();
+  const [updated, setUpdated] = useState(false);
+
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      bio: "",
+      username: "",
+    },
+  });
+
   useEffect(() => {
-    reset(profile);
-  }, [profile, reset]);
+    const getUser = async () => {
+      try {
+        const user = await fetchCurrentUser();
+        if (user?._id) {
+          const fullName = user.name?.trim() || "";
+          const [first = "", last = ""] = fullName.split(" ");
+
+          reset({
+            firstName: first,
+            lastName: last,
+            bio: user.bio || "",
+            username: user.username || "",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    getUser();
+  }, [reset, updated]);
+
   const onSubmit = (data) => {
-    updateProfile(data);
+    //send data to backend
+    console.log(data);
     reset();
   };
   return (
@@ -56,9 +86,7 @@ export default function ProfilePageMain() {
           w="200px"
           h="200px"
           borderRadius="full"
-          backgroundImage={`url(${
-            profile.avatar || "https://placehold.co/200"
-          })`}
+          backgroundImage={`url(${"https://placehold.co/200"})`}
           backgroundSize="cover"
           backgroundPosition="center"
           overflow="hidden"
@@ -87,9 +115,16 @@ export default function ProfilePageMain() {
       <Box my={2} background={"gray.100"} borderRadius={"md"} p={2}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl isRequired display={"flex"} my={2}>
+            <FormLabel w={"40%"}>Username</FormLabel>
+            <Input
+              w={"60%"}
+              borderColor={"gray.700"}
+              {...register("username", { required: true })}
+            />
+          </FormControl>
+          <FormControl isRequired display={"flex"} my={2}>
             <FormLabel w={"40%"}>First Name</FormLabel>
             <Input
-              placeholder="Ben"
               w={"60%"}
               borderColor={"gray.700"}
               {...register("firstName", { required: true })}
@@ -98,7 +133,6 @@ export default function ProfilePageMain() {
           <FormControl isRequired display={"flex"} my={2}>
             <FormLabel w={"40%"}>Last Name</FormLabel>
             <Input
-              placeholder="Ben"
               w={"60%"}
               borderColor={"gray.700"}
               {...register("lastName", { required: true })}
@@ -107,13 +141,11 @@ export default function ProfilePageMain() {
           <FormControl isRequired display={"flex"} my={2}>
             <FormLabel w={"40%"}>Bio</FormLabel>
             <Input
-              placeholder="Ben"
               w={"60%"}
               borderColor={"gray.700"}
               {...register("bio", { required: true })}
             />
           </FormControl>
-          
         </form>
       </Box>
       <Flex justifyContent={"end"}>
