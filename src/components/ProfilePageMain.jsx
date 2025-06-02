@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { FaImage } from "react-icons/fa";
 import { fetchCurrentUser } from "../data/fetchCurrentUser";
+import ImageUploader from "./ImageUploader";
 
 export default function ProfilePageMain() {
   const [updated, setUpdated] = useState(false);
@@ -32,7 +33,6 @@ export default function ProfilePageMain() {
     const getUser = async () => {
       try {
         const user = await fetchCurrentUser();
-        console.log("user", user);
         if (user?._id) {
           const fullName = user.name?.trim() || "";
           const [first = "", last = ""] = fullName.split(" ");
@@ -128,6 +128,8 @@ export default function ProfilePageMain() {
           Add personal details to create a personal touch to your profile.
         </Text>
       </Box>
+
+      <ImageUploader />
 
       <Flex
         my={2}
