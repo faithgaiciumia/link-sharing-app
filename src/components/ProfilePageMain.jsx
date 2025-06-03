@@ -12,7 +12,6 @@ import {
 
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { FaImage } from "react-icons/fa";
 import { fetchCurrentUser } from "../data/fetchCurrentUser";
 import ImageUploader from "./ImageUploader";
 
@@ -129,8 +128,6 @@ export default function ProfilePageMain() {
         </Text>
       </Box>
 
-      <ImageUploader />
-
       <Flex
         my={2}
         justify={"space-between"}
@@ -142,32 +139,7 @@ export default function ProfilePageMain() {
         <Text fontSize={"sm"} fontWeight={600}>
           Profile picture
         </Text>
-        <Box
-          w="200px"
-          h="200px"
-          borderRadius="full"
-          backgroundImage={`url(${"https://placehold.co/200"})`}
-          backgroundSize="cover"
-          backgroundPosition="center"
-          overflow="hidden"
-        >
-          <Flex
-            justify={"center"}
-            align={"center"}
-            direction={"column"}
-            h={"100%"}
-            bg="rgba(0, 0, 0, 0.3)"
-          >
-            <Button
-              variant={"ghost"}
-              color="white"
-              leftIcon={<FaImage />}
-              size={"md"}
-            >
-              Change Image
-            </Button>
-          </Flex>
-        </Box>
+        <ImageUploader />
         <Text fontSize={"sm"} w={"40%"}>
           Image must be below 1024px*1024px. Use PNG, JPG, or RMP format.
         </Text>
