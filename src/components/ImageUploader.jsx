@@ -122,7 +122,6 @@ export default function ImageUploader({ currentUserId, initialImageURL }) {
         overflow="hidden"
         boxShadow="lg"
       >
-        
         <IconButton
           icon={<FaCamera />}
           aria-label="Change Profile Picture"
@@ -131,7 +130,7 @@ export default function ImageUploader({ currentUserId, initialImageURL }) {
           right="32px"
           size="sm"
           bg="whiteAlpha.800"
-          _hover={{ bg: "purple.600", color:"whiteAlpha.800" }}
+          _hover={{ bg: "purple.600", color: "whiteAlpha.800" }}
           color="gray.700"
           borderRadius="full"
           onClick={onOpen}

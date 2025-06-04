@@ -2,8 +2,8 @@ import { LinkIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { LuUserRound } from "react-icons/lu";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import LogoutButton from "../LogoutButton";
 import { FiEye } from "react-icons/fi";
+import UserMenu from "./UserMenu";
 
 export default function Navbar() {
   const location = useLocation();
@@ -74,7 +74,7 @@ export default function Navbar() {
           </Button>
         </Flex>
         <Flex>         
-          <LogoutButton/>
+          <UserMenu/>
         </Flex>
       </Flex>
     </Box>
