@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, useToast } from "@chakra-ui/react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Home/Navbar";
 import MainContent from "../components/Home/MainContent";
 import { useEffect } from "react";
 import { fetchSession } from "../data/fetchSession";

@@ -1,7 +1,7 @@
 import { Box, Flex } from "@chakra-ui/react";
-import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import ProfilePageMain from "../components/ProfilePageMain";
+import Navbar from "../components/Home/Navbar";
 
 export default function Profile() {
   return (

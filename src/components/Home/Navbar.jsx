@@ -2,7 +2,8 @@ import { LinkIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { LuUserRound } from "react-icons/lu";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "../LogoutButton";
+import { FiEye } from "react-icons/fi";
 
 export default function Navbar() {
   const location = useLocation();
@@ -16,15 +17,15 @@ export default function Navbar() {
         <Flex gap={6} align={"center"}>
           <Button
             as={RouterLink}
-            to={"/"}
+            to={"/home"}
             leftIcon={<LinkIcon />}
             variant={"ghost"}
             borderRadius={"lg"}
             p={2}
             size={"sm"}
-            color={location.pathname === "/" ? "purple.700" : "gray.700"}
+            color={location.pathname === "/home" ? "purple.700" : "gray.700"}
             backgroundColor={
-              location.pathname === "/" ? "purple.200" : "transparent"
+              location.pathname === "/home" ? "purple.200" : "transparent"
             }
             _hover={{
               backgroundColor: "purple.100",
@@ -52,11 +53,27 @@ export default function Navbar() {
           >
             Profile Details
           </Button>
-        </Flex>
-        <Flex>
-          <Button as={RouterLink} to={"/preview"} variant={"outline"} colorScheme="purple" size={"sm"}>
+          <Button
+            as={RouterLink}
+            to={"/preview"}
+            leftIcon={<FiEye />}
+            variant={"ghost"}
+            borderRadius={"lg"}
+            p={2}
+            size={"sm"}
+            color={location.pathname === "/preview" ? "purple.700" : "gray.700"}
+            backgroundColor={
+              location.pathname === "/preview" ? "purple.200" : "transparent"
+            }
+            _hover={{
+              backgroundColor: "purple.100",
+              color: "purple.800",
+            }}
+          >
             Preview
           </Button>
+        </Flex>
+        <Flex>         
           <LogoutButton/>
         </Flex>
       </Flex>
