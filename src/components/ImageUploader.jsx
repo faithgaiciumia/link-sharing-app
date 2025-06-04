@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Box,
   Button,
@@ -16,9 +17,47 @@ import { FaImage } from "react-icons/fa";
 import { useState } from "react";
 import { uploadToCloudinary } from "../data/cloudinaryUpload";
 
-export default function ImageUploader() {
+export default function ImageUploader({ currentUserId }) {
+  console.log("user id", currentUserId);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageURL, setImageURL] = useState("");
+
+  async function updateUserImageURL(imageURL, userId) {
+    try {
+      const response = await fetch("http://localhost:4000/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+          mutation UpdateUserImage($imageURL: String!, $userId: String!) {
+            updateUserImageURL(imageURL: $imageURL, userId: $userId) {
+              _id
+              imageURL
+            }
+          }
+        `,
+          variables: {
+            imageURL,
+            userId,
+          },
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.errors) {
+        console.error("GraphQL errors:", result.errors);
+        throw new Error(result.errors[0].message);
+      }
+
+      return result.data.updateUserImageURL;
+    } catch (error) {
+      console.error("Update failed:", error);
+      throw error;
+    }
+  }
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -26,7 +65,14 @@ export default function ImageUploader() {
       try {
         const url = await uploadToCloudinary(file);
         setImageURL(url);
-        console.log("uploaded image:", url);
+
+        updateUserImageURL(imageURL, currentUserId)
+          .then((updatedUser) => {
+            console.log("updated user", updatedUser);
+          })
+          .catch((err) => {
+            console.error("Image update failed", err);
+          });
       } catch (error) {
         console.error("failed to upload image", error);
       }
