@@ -10,9 +10,9 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Input,
   useDisclosure,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -30,6 +30,8 @@ export default function ImageUploader({ currentUserId, initialImageURL }) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageURL, setImageURL] = useState("");
+
+  const [isUploading, setIsUploading] = useState(false);
 
   async function updateUserImageURL(imageURL, userId) {
     try {
@@ -70,37 +72,40 @@ export default function ImageUploader({ currentUserId, initialImageURL }) {
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      try {
-        const url = await uploadToCloudinary(file);
-        setImageURL(url);
+    if (!file) return;
+    setIsUploading(true);
 
-        updateUserImageURL(url, currentUserId)
-          .then(() => {
-            //console.log("updated user", updatedUser);
-            toast({
-              title: "Image Updated",
-              description: "Your profile picture was updated successfully.",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-          })
-          .catch((err) => {
-            console.error("Image update failed", err);
-            toast({
-              title: "Upload Failed",
-              description: "There was a problem uploading your image.",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
+    try {
+      const url = await uploadToCloudinary(file);
+      setImageURL(url);
+
+      updateUserImageURL(url, currentUserId)
+        .then(() => {
+          //console.log("updated user", updatedUser);
+          toast({
+            title: "Image Updated",
+            description: "Your profile picture was updated successfully.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
           });
-      } catch (error) {
-        console.error("failed to upload image", error);
-      }
+        })
+        .catch((err) => {
+          console.error("Image update failed", err);
+          toast({
+            title: "Upload Failed",
+            description: "There was a problem uploading your image.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
+    } catch (error) {
+      console.error("failed to upload image", error);
+    } finally {
+      setIsUploading(false);
+      onClose();
     }
-    onClose();
   };
 
   return (
@@ -140,10 +145,34 @@ export default function ImageUploader({ currentUserId, initialImageURL }) {
           <ModalHeader>Upload Profile Picture</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Input type="file" accept="image/*" onChange={handleImageChange} />
+            <Button
+              as="label"
+              htmlFor="file-upload"
+              colorScheme="blue"
+              w="100%"
+              cursor="pointer"
+              isDisabled={isUploading}
+            >
+              {isUploading ? (
+                <Flex align="center" justify="center" gap={2}>
+                  <Spinner colorScheme="purple" size="sm" /> Uploading...
+                </Flex>
+              ) : (
+                "Choose Image"
+              )}
+            </Button>
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+            />
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose} isDisabled={isUploading}>
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
