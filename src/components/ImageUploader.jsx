@@ -13,8 +13,9 @@ import {
   useDisclosure,
   useToast,
   Spinner,
+  IconButton,
 } from "@chakra-ui/react";
-import { FaImage } from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { uploadToCloudinary } from "../data/cloudinaryUpload";
 
@@ -113,29 +114,30 @@ export default function ImageUploader({ currentUserId, initialImageURL }) {
       <Box
         w="200px"
         h="200px"
+        position="relative"
         borderRadius="full"
         backgroundImage={`url(${imageURL || "https://placehold.co/200"})`}
         backgroundSize="cover"
         backgroundPosition="center"
         overflow="hidden"
+        boxShadow="lg"
       >
-        <Flex
-          justify={"center"}
-          align={"center"}
-          direction={"column"}
-          h={"100%"}
-          bg="rgba(0, 0, 0, 0.3)"
-        >
-          <Button
-            variant={"ghost"}
-            color="white"
-            leftIcon={<FaImage />}
-            size={"md"}
-            onClick={onOpen}
-          >
-            Change Image
-          </Button>
-        </Flex>
+        
+        <IconButton
+          icon={<FaCamera />}
+          aria-label="Change Profile Picture"
+          position="absolute"
+          bottom="20px"
+          right="32px"
+          size="sm"
+          bg="whiteAlpha.800"
+          _hover={{ bg: "purple.600", color:"whiteAlpha.800" }}
+          color="gray.700"
+          borderRadius="full"
+          onClick={onOpen}
+          boxShadow="md"
+          zIndex={2}
+        />
       </Box>
 
       {/* Modal for uploading image */}
