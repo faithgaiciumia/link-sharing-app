@@ -12,6 +12,7 @@ import {
   ModalCloseButton,
   Input,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -20,10 +21,12 @@ import { uploadToCloudinary } from "../data/cloudinaryUpload";
 export default function ImageUploader({ currentUserId, initialImageURL }) {
   //monitor image url
   useEffect(() => {
-  if (initialImageURL) {
-    setImageURL(initialImageURL);
-  }
-}, [initialImageURL]);
+    if (initialImageURL) {
+      setImageURL(initialImageURL);
+    }
+  }, [initialImageURL]);
+
+  const toast = useToast();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageURL, setImageURL] = useState("");
@@ -73,11 +76,25 @@ export default function ImageUploader({ currentUserId, initialImageURL }) {
         setImageURL(url);
 
         updateUserImageURL(url, currentUserId)
-          .then((updatedUser) => {
-            console.log("updated user", updatedUser);
+          .then(() => {
+            //console.log("updated user", updatedUser);
+            toast({
+              title: "Image Updated",
+              description: "Your profile picture was updated successfully.",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
           })
           .catch((err) => {
             console.error("Image update failed", err);
+            toast({
+              title: "Upload Failed",
+              description: "There was a problem uploading your image.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
           });
       } catch (error) {
         console.error("failed to upload image", error);
