@@ -1,80 +1,80 @@
 import { LinkIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  useBreakpointValue,
+  Tooltip,
+} from "@chakra-ui/react";
 import { LuUserRound } from "react-icons/lu";
-import { Link as RouterLink, useLocation } from "react-router-dom";
 import { FiEye } from "react-icons/fi";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import UserMenu from "./UserMenu";
 
 export default function Navbar() {
   const location = useLocation();
+  const showText = useBreakpointValue({ base: false, md: true });
+
+  const navItems = [
+    {
+      label: "Links",
+      icon: <LinkIcon />,
+      path: "/home",
+    },
+    {
+      label: "Profile Details",
+      icon: <LuUserRound />,
+      path: "/profile",
+    },
+    {
+      label: "Preview",
+      icon: <FiEye />,
+      path: "/preview",
+    },
+  ];
 
   return (
-    <Box p={4} boxShadow={"lg"} bg={"white"} borderRadius={"lg"}>
-      <Flex justify={"space-between"} align={"center"}>
+    <Box p={4} boxShadow="lg" bg="white" borderRadius="lg">
+      <Flex justify="space-between" align="center">
         <Box>
-          <Heading fontSize={"md"}>Wanlinq</Heading>
+          <Heading fontSize="md">Wanlinq</Heading>
         </Box>
-        <Flex gap={6} align={"center"}>
-          <Button
-            as={RouterLink}
-            to={"/home"}
-            leftIcon={<LinkIcon />}
-            variant={"ghost"}
-            borderRadius={"lg"}
-            p={2}
-            size={"sm"}
-            color={location.pathname === "/home" ? "purple.700" : "gray.700"}
-            backgroundColor={
-              location.pathname === "/home" ? "purple.200" : "transparent"
-            }
-            _hover={{
-              backgroundColor: "purple.100",
-              color: "purple.800",
-            }}
-          >
-            Links
-          </Button>
-          <Button
-            as={RouterLink}
-            to={"/profile"}
-            leftIcon={<LuUserRound />}
-            variant={"ghost"}
-            borderRadius={"lg"}
-            p={2}
-            size={"sm"}
-            color={location.pathname === "/profile" ? "purple.700" : "gray.700"}
-            backgroundColor={
-              location.pathname === "/profile" ? "purple.200" : "transparent"
-            }
-            _hover={{
-              backgroundColor: "purple.100",
-              color: "purple.800",
-            }}
-          >
-            Profile Details
-          </Button>
-          <Button
-            as={RouterLink}
-            to={"/preview"}
-            leftIcon={<FiEye />}
-            variant={"ghost"}
-            borderRadius={"lg"}
-            p={2}
-            size={"sm"}
-            color={location.pathname === "/preview" ? "purple.700" : "gray.700"}
-            backgroundColor={
-              location.pathname === "/preview" ? "purple.200" : "transparent"
-            }
-            _hover={{
-              backgroundColor: "purple.100",
-              color: "purple.800",
-            }}
-          >
-            Preview
-          </Button>
+
+        <Flex gap={4} align="center">
+          {navItems.map(({ label, icon, path }) => {
+            const isActive = location.pathname === path;
+
+            const button = (
+              <Button
+                as={RouterLink}
+                to={path}
+                leftIcon={icon}
+                variant="ghost"
+                borderRadius="lg"
+                p={2}
+                size="sm"
+                color={isActive ? "purple.700" : "gray.700"}
+                backgroundColor={isActive ? "purple.200" : "transparent"}
+                _hover={{
+                  backgroundColor: "purple.100",
+                  color: "purple.800",
+                }}
+              >
+                {showText && label}
+              </Button>
+            );
+
+            return showText ? button : (
+              <Tooltip label={label} key={path} hasArrow placement="bottom">
+                {button}
+              </Tooltip>
+            );
+          })}
         </Flex>
-        <Flex>         
-          <UserMenu/>
+
+        <Flex>
+          <UserMenu />
         </Flex>
       </Flex>
     </Box>
