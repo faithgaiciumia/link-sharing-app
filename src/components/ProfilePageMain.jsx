@@ -19,6 +19,7 @@ export default function ProfilePageMain() {
   const [updated, setUpdated] = useState(false);
   const toast = useToast();
   const [currentUserId, setCurrentUserId] = useState("");
+  const [initialImageURL, setInitialImageURL]=useState("");
 
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -35,6 +36,7 @@ export default function ProfilePageMain() {
         const user = await fetchCurrentUser();
         if (user?._id) {
           setCurrentUserId(user._id);
+          setInitialImageURL(user.imageURL);
           const fullName = user.name?.trim() || "";
           const [first = "", last = ""] = fullName.split(" ");
 
@@ -141,7 +143,7 @@ export default function ProfilePageMain() {
         <Text fontSize={"sm"} fontWeight={600}>
           Profile picture
         </Text>
-        <ImageUploader currentUserId={currentUserId} />
+        <ImageUploader currentUserId={currentUserId} initialImageURL={initialImageURL} />
         <Text fontSize={"sm"} w={"40%"}>
           Image must be below 1024px*1024px. Use PNG, JPG, or RMP format.
         </Text>

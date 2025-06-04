@@ -14,11 +14,17 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { uploadToCloudinary } from "../data/cloudinaryUpload";
 
-export default function ImageUploader({ currentUserId }) {
-  console.log("user id", currentUserId);
+export default function ImageUploader({ currentUserId, initialImageURL }) {
+  //monitor image url
+  useEffect(() => {
+  if (initialImageURL) {
+    setImageURL(initialImageURL);
+  }
+}, [initialImageURL]);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageURL, setImageURL] = useState("");
 
@@ -66,7 +72,7 @@ export default function ImageUploader({ currentUserId }) {
         const url = await uploadToCloudinary(file);
         setImageURL(url);
 
-        updateUserImageURL(imageURL, currentUserId)
+        updateUserImageURL(url, currentUserId)
           .then((updatedUser) => {
             console.log("updated user", updatedUser);
           })
