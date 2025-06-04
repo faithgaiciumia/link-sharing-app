@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Flex, useToast } from "@chakra-ui/react";
+import { Box, useToast } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import MainContent from "../components/MainContent";
+import MainContent from "../components/Home/MainContent";
 import { useEffect } from "react";
 import { fetchSession } from "../data/fetchSession";
 
@@ -26,21 +25,9 @@ export default function Home() {
   return (
     <Box p={2}>
       <Navbar />
-      <Flex gap={2}>
-        <Box
-          boxShadow={"lg"}
-          borderRadius={"lg"}
-          background={"white"}
-          minH={"80vh"}
-          my={4}
-          width={"30%"}
-          p={8}
-          h={"auto"}
-        >
-          <Sidebar />
-        </Box>
+      <Box>
         <MainContent />
-      </Flex>
+      </Box>
     </Box>
   );
 }

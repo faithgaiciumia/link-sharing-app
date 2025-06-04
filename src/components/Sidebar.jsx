@@ -1,8 +1,29 @@
 import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
-import useLinkStore from "../store/useLinkStore";
+
+import { useEffect, useState } from "react";
+import { fetchCurrentUser } from "../data/fetchCurrentUser";
 
 export default function Sidebar() {
-  const { profile, links } = useLinkStore();
+  const [imageURL, setImageURL] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [bio, setBio] = useState("");
+  const [links, setLinks] = useState([]);
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const user = await fetchCurrentUser();
+        if (user) {
+          setImageURL(user.imageURL);
+          setFullName(user.name);
+          setBio(user.bio);
+          setLinks(user.links);
+        }
+      } catch (error) {
+        console.error("error getting user:", error);
+      }
+    };
+    getUser();
+  });
   return (
     <Box>
       <Flex
@@ -21,13 +42,13 @@ export default function Sidebar() {
       >
         <Image
           borderRadius={"full"}
-          src={profile.avatar || "https://placehold.co/150"}
+          src={imageURL || "https://placehold.co/150"}
           w={"150px"}
           h={"150px"}
         />
-        {profile.firstName && profile.lastName ? (
+        {fullName ? (
           <Heading my={2} textAlign="center" fontSize="md">
-            {profile.firstName} {profile.lastName}
+            {fullName}
           </Heading>
         ) : (
           <Box
@@ -40,9 +61,9 @@ export default function Sidebar() {
             borderColor={"white"}
           ></Box>
         )}
-        {profile.bio ? (
+        {bio ? (
           <Text textAlign={"center"} fontSize={"sm"} mb={4}>
-            {profile.bio}
+            {bio}
           </Text>
         ) : (
           <Box
@@ -69,11 +90,11 @@ export default function Sidebar() {
             w={"100%"}
             my={2}
             borderRadius={"lg"}
-            key={link.platform}
+            key={link.siteLink}
             as={"a"}
-            href={link.link}
+            href={link.siteLink}
           >
-            {link.platform}
+            {link.siteName}
           </Button>
         ))}
       </Flex>
