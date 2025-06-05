@@ -42,10 +42,11 @@ export default function Signin() {
     setLoading(true);
     setEmail(data.email);
     try {
-      const csrfResponse = await fetch("http://localhost:4000/auth/csrf", {
+      const csrfResponse = await fetch("https://wanlinq-back.onrender.com/auth/csrf", {
         credentials: "include",
       });
       const csrfData = await csrfResponse.json();
+      console.log("csrfdata:",csrfData.csrfToken);
       const csrfToken = csrfData.csrfToken;
 
       const formBody = new URLSearchParams();
@@ -53,7 +54,7 @@ export default function Signin() {
       formBody.append("csrfToken", csrfToken);
       formBody.append("callbackUrl", "http://localhost:5173");
 
-      const res = await fetch("http://localhost:4000/auth/signin/resend", {
+      const res = await fetch("https://wanlinq-back.onrender.com/auth/signin/resend", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

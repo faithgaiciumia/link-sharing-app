@@ -1,6 +1,6 @@
 export const fetchCurrentUser = async () => {
   try {
-    const res = await fetch("http://localhost:4000/graphql", {
+    const res = await fetch("https://wanlinq-back.onrender.com/graphql", {
       method: "POST",
       credentials: "include",
       headers: {

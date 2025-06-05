@@ -46,7 +46,7 @@ export default function SetupUsername() {
 
     const delayFunction = setTimeout(async () => {
       try {
-        const res = await fetch("http://localhost:4000/graphql", {
+        const res = await fetch("https://wanlinq-back.onrender.com/graphql", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -78,7 +78,7 @@ export default function SetupUsername() {
   const onSubmit = async ({ username }) => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/graphql", {
+      const res = await fetch("https://wanlinq-back.onrender.com/graphql", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

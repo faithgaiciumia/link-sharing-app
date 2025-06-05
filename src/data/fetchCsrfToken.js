@@ -1,5 +1,5 @@
 export const fetchCsrfToken = async () => {
-  const res = await fetch("http://localhost:4000/auth/csrf", {
+  const res = await fetch("https://wanlinq-back.onrender.com/auth/csrf", {
     method: "GET",
     credentials: "include",
   });

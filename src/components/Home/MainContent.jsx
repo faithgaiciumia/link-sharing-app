@@ -84,7 +84,7 @@ export default function MainContent() {
 
       const { siteName, siteLink } = data;
 
-      const res = await fetch("http://localhost:4000/graphql", {
+      const res = await fetch("https://wanlinq-back.onrender.com/graphql", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -145,7 +145,7 @@ export default function MainContent() {
     try {
       const user = await fetchCurrentUser();
 
-      const res = await fetch("http://localhost:4000/graphql", {
+      const res = await fetch("https://wanlinq-back.onrender.com/graphql", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
