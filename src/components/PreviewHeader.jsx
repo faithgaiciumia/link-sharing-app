@@ -1,10 +1,7 @@
 import {
   Box,
   Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Input,
+  Flex,  
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -16,19 +13,36 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import useLinkStore from "../store/useLinkStore";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { fetchCurrentUser } from "../data/fetchCurrentUser";
 export default function PreviewHeader() {
   const navigate = useNavigate();
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const { generateLink, generatedLink, username, setUsername} = useLinkStore();
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data)=>{
-    console.log(data);
-    setUsername(data.username);
+
+  //get the stored username
+  const [username, setUsername] = useState("");
+  const [generatedLink, setGeneratedLink] = useState("");
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await fetchCurrentUser();
+      if (user) {
+        setUsername(user.username);
+      }
+    };
+    const generateLink = () => {
+      setGeneratedLink(`https://quicklinq.netlify.app/${username}`);
+    };
+    getUser();
     generateLink();
-    onClose();    
-  }
+  }, [username]);
+
+  // const { register, handleSubmit } = useForm();
+  // const onSubmit = (data) => {
+  //   console.log(data);
+  //   setUsername(data.username);
+  //   generateLink();
+  //   onClose();
+  // };
   return (
     <Box
       h={"50vh"}
@@ -74,21 +88,6 @@ export default function PreviewHeader() {
               <ModalContent>
                 <ModalHeader>Please select a username first: </ModalHeader>
                 <ModalCloseButton />
-                <ModalBody>
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <FormControl isRequired>
-                      <FormLabel>Username</FormLabel>
-                      <Input
-                        placeholder="shumlinks/"
-                        {...register("username", { required: true })}
-                      />
-                    </FormControl>
-                  </form>
-                </ModalBody>
-                <ModalFooter>
-                  <Button onClick={onClose}>Cancel</Button>
-                  <Button colorScheme="purple" type="submit" onClick={handleSubmit(onSubmit)}>Save</Button>
-                </ModalFooter>
               </ModalContent>
             )}
           </Modal>
