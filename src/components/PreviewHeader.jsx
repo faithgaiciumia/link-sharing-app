@@ -1,7 +1,8 @@
 import {
   Box,
   Button,
-  Flex,  
+  Flex,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,17 +12,21 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchCurrentUser } from "../data/fetchCurrentUser";
+import { CopyIcon } from "@chakra-ui/icons";
+
 export default function PreviewHeader() {
   const navigate = useNavigate();
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const toast = useToast();
 
-  //get the stored username
   const [username, setUsername] = useState("");
   const [generatedLink, setGeneratedLink] = useState("");
+
   useEffect(() => {
     const getUser = async () => {
       const user = await fetchCurrentUser();
@@ -29,20 +34,56 @@ export default function PreviewHeader() {
         setUsername(user.username);
       }
     };
-    const generateLink = () => {
-      setGeneratedLink(`https://quicklinq.netlify.app/${username}`);
-    };
     getUser();
-    generateLink();
+  }, []);
+
+  useEffect(() => {
+    if (username) {
+      setGeneratedLink(`https://quicklinq.netlify.app/${username}`);
+    }
   }, [username]);
 
-  // const { register, handleSubmit } = useForm();
-  // const onSubmit = (data) => {
-  //   console.log(data);
-  //   setUsername(data.username);
-  //   generateLink();
-  //   onClose();
-  // };
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedLink);
+      toast({
+        title: "Link copied!",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (err) {
+      console.error("error copying link", err);
+      toast({
+        title: "Failed to copy.",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const shareLink = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "My WanLinq",
+          text: "Check out my link:",
+          url: generatedLink,
+        });
+      } catch (err) {
+        console.log("Share cancelled or failed:", err);
+      }
+    } else {
+      toast({
+        title: "Share not supported on this browser.",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box
       h={"50vh"}
@@ -65,31 +106,48 @@ export default function PreviewHeader() {
           <Button
             colorScheme="purple"
             size={"sm"}
-            onClick={() => {
-              onOpen();
-            }}
+            onClick={onOpen}
           >
             Share link
           </Button>
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            {username ? (
-              <ModalContent>
-                <ModalHeader>Shareable Link</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <Text>Your shareable Link is: {generatedLink}</Text>
-                </ModalBody>
-                <ModalFooter>
-                  <Button onClick={onClose}>Cancel</Button>
-                </ModalFooter>
-              </ModalContent>
-            ) : (
-              <ModalContent>
-                <ModalHeader>Please select a username first: </ModalHeader>
-                <ModalCloseButton />
-              </ModalContent>
-            )}
+            <ModalContent>
+              <ModalHeader>Shareable Link</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Flex
+                  p={3}
+                  border="1px solid #ddd"
+                  borderRadius="md"
+                  justify="space-between"
+                  align="center"
+                >
+                  <Text fontSize="sm" wordBreak="break-all">
+                    {generatedLink}
+                  </Text>
+                  <IconButton
+                    aria-label="Copy link"
+                    icon={<CopyIcon />}
+                    size="sm"
+                    ml={2}
+                    onClick={copyToClipboard}
+                  />
+                </Flex>
+
+                <Button
+                  mt={4}
+                  colorScheme="purple"
+                  width="100%"
+                  onClick={shareLink}
+                >
+                  Share via device
+                </Button>
+              </ModalBody>
+              <ModalFooter>
+                <Button onClick={onClose}>Close</Button>
+              </ModalFooter>
+            </ModalContent>
           </Modal>
         </Flex>
       </Box>
